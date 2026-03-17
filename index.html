@@ -149,7 +149,7 @@
     } 
     else if(step === 2) {
       statusEl.innerText = "第三階段：全班跟進 (維持一直排，站在班牌手正後方)";
-      btn.innerText = "下一步：展開雙縱隊";
+      btn.innerText = "下一步：雙數號向左前踏步";
       studentsData.forEach(s => {
         if(!s.isLeader) {
           s.element.style.left = getX(s.classData.danceNum) + 'px';
@@ -157,7 +157,7 @@
       });
     }
     else if(step === 3) {
-      statusEl.innerText = "第四階段：雙數號左前踏步，單數號往前遞補 (班牌手獨立站立！)";
+      statusEl.innerText = "第四階段：雙數號左前踏步，與單數號平齊 (班牌手獨立站立！)";
       btn.innerText = "✅ 演示完畢";
       btn.disabled = true;
       studentsData.forEach(s => {
@@ -165,18 +165,14 @@
           // 班牌手不動，維持在 Y=140
         } 
         else if (s.isOdd) {
-          // 單數號 (1, 3, 5) 留在原來的標線上 (右側號碼)
-          // 往前遞補，計算新的排數 (1號在第1排, 3號在第2排)
-          let newRow = (s.index + 1) / 2; 
-          s.element.style.left = getX(s.classData.danceNum) + 'px'; 
-          s.element.style.top = (140 + newRow * 45) + 'px'; 
+          // 單數號 (1, 3, 5) 原地不動！
+          // 已經在第三階段移到正確的 X 軸，Y 軸也維持原本的間距
         } 
         else if (s.isEven) {
           // 雙數號 (2, 4, 6) 往左側號碼踏步 (danceNum - 1)
-          // 與前一位單數號平行 (2號對齊1號, 4號對齊3號)
-          let newRow = s.index / 2; 
           s.element.style.left = getX(s.classData.danceNum - 1) + 'px'; 
-          s.element.style.top = (140 + newRow * 45) + 'px'; 
+          // 往前一步，對齊前一位單數號的 Y 座標 (例如：2號對齊1號的 Y)
+          s.element.style.top = getY_open(s.index - 1) + 'px'; 
         }
       });
     }
