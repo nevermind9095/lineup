@@ -3,190 +3,279 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>五年級大會舞隊形變換演示 (精準對位版)</title>
+<title>五六年級大會舞隊形變換演示 (完整教學版)</title>
 <style>
-  body { font-family: '微軟正黑體', sans-serif; text-align: center; background-color: #f4f7f6; margin: 0; padding: 20px;}
-  #controls { margin-bottom: 20px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: inline-block;}
-  button { padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #4CAF50; color: white; border: none; border-radius: 5px; transition: 0.3s; font-weight: bold;}
-  button:hover { background-color: #45a049; }
-  button:disabled { background-color: #cccccc; cursor: not-allowed; }
-  #status { font-size: 18px; font-weight: bold; margin: 10px 0 20px 0; color: #d32f2f; }
+  body { font-family: '微軟正黑體', sans-serif; text-align: center; background-color: #f0f4f8; margin: 0; padding: 20px;}
+  
+  /* 控制台與口令顯示區 */
+  #controls { margin-bottom: 20px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: inline-block; width: 900px;}
+  #commander-box { background-color: #ffeaa7; border-left: 6px solid #d63031; padding: 12px; margin-bottom: 15px; border-radius: 4px; text-align: left;}
+  #commander-title { font-weight: bold; color: #d63031; margin-bottom: 8px; font-size: 18px;}
+  #command-text { font-size: 26px; font-weight: bold; color: #2d3436; letter-spacing: 2px;}
+  #action-desc { font-size: 18px; color: #636e72; margin-top: 8px;}
+  
+  /* 按鈕樣式 */
+  .btn-group { display: flex; justify-content: center; gap: 15px; }
+  button { padding: 12px 24px; font-size: 18px; cursor: pointer; border: none; border-radius: 5px; transition: 0.3s; font-weight: bold; color: white;}
+  button:disabled { background-color: #cccccc !important; cursor: not-allowed; transform: none !important; box-shadow: none !important;}
+  
+  #prevBtn { background-color: #f39c12; }
+  #prevBtn:hover:not(:disabled) { background-color: #e67e22; transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.2);}
+  
+  #nextBtn { background-color: #0984e3; }
+  #nextBtn:hover:not(:disabled) { background-color: #74b9ff; transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.2);}
+  
+  #resetBtn { background-color: #d63031; }
+  #resetBtn:hover:not(:disabled) { background-color: #ff7675; transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.2);}
   
   /* 操場設定 */
-  #field { position: relative; width: 800px; height: 550px; margin: 0 auto; background-color: #d26953; border: 3px solid #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.2);}
+  #field { position: relative; width: 1200px; height: 800px; margin: 0 auto; background-color: #e17055; border: 4px solid #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.2);}
   
   /* 司令台 */
-  #stage { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 200px; height: 40px; background-color: #333; color: white; line-height: 40px; font-size: 20px; font-weight: bold; border-radius: 5px; letter-spacing: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.4); z-index: 5;}
+  #stage { position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 250px; height: 50px; background-color: #2d3436; color: white; line-height: 50px; font-size: 24px; font-weight: bold; border-radius: 5px; letter-spacing: 10px; z-index: 5;}
   
-  /* 操場中線與右半場提示 */
+  /* 中線與區域提示 */
   #center-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background-color: rgba(255,255,255,0.7); z-index: 1;}
-  #right-half-text { position: absolute; left: 70%; top: 250px; transform: translateX(-50%); color: rgba(255,255,255,0.3); font-size: 36px; font-weight: bold; z-index: 1;}
-  #left-half-text { position: absolute; left: 25%; top: 60px; transform: translateX(-50%); color: rgba(255,255,255,0.5); font-size: 24px; font-weight: bold; z-index: 1;}
+  .area-text { position: absolute; top: 100px; color: rgba(255,255,255,0.4); font-size: 36px; font-weight: bold; z-index: 1;}
+  #left-text { left: 20%; transform: translateX(-50%); }
+  #right-text { right: 20%; transform: translateX(50%); }
 
   /* 地上標線與號碼 */
-  .line { position: absolute; top: 60px; width: 2px; height: 100%; background-color: rgba(255,255,255,0.3); z-index: 2;}
-  .number { position: absolute; bottom: 15px; color: white; font-weight: bold; font-size: 16px; transform: translateX(-50%); background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; z-index: 3;}
+  .line { position: absolute; top: 80px; width: 2px; height: 100%; background-color: rgba(255,255,255,0.25); z-index: 2;}
+  .number { position: absolute; bottom: 20px; color: white; font-weight: bold; font-size: 18px; transform: translateX(-50%); background: rgba(0,0,0,0.4); padding: 4px 10px; border-radius: 4px; z-index: 3;}
   
   /* 學生節點設定 */
-  .student { position: absolute; border-radius: 50%; border: 2px solid white; text-align: center; font-size: 14px; font-weight: bold; color: white; transition: all 1s ease-in-out; transform: translate(-50%, -50%); box-shadow: 0 3px 6px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;}
+  .student { position: absolute; border-radius: 50%; border: 2px solid white; text-align: center; font-size: 16px; font-weight: bold; color: white; transition: all 0.4s ease-in-out; transform: translate(-50%, -50%); box-shadow: 0 4px 8px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;}
+  .leader { width: 65px; height: 30px; border-radius: 6px; z-index: 10;} 
+  .normal { width: 30px; height: 30px; z-index: 8; }
   
-  /* 班牌手特別設定 (長方形) */
-  .leader { width: 55px; height: 26px; border-radius: 6px; color: #fff; z-index: 10; font-size: 14px; box-shadow: 0 0 10px rgba(255,255,0,0.5);} 
-  /* 一般學生設定 (圓形) */
-  .normal { width: 24px; height: 24px; z-index: 8; }
+  /* 學生對話框 (喊聲) */
+  .shout { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: white; color: #d63031; font-size: 16px; padding: 4px 8px; border-radius: 6px; font-weight: bold; display: none; white-space: nowrap; box-shadow: 0 3px 6px rgba(0,0,0,0.3); z-index: 20;}
+  .shout::after { content: ''; position: absolute; top: 100%; left: 50%; margin-left: -6px; border-width: 6px; border-style: solid; border-color: white transparent transparent transparent; }
+
 </style>
 </head>
 <body>
 
-  <h2>🏃‍♂️ 五年級大會舞隊形變換演示 (左半場視角)</h2>
-  
   <div id="controls">
-    <div id="status">第一階段：開幕站位 (五年級在左半場，面朝司令台)</div>
-    <button id="nextBtn" onclick="nextStep()">下一步：班牌手出列 (移至大會舞號碼)</button>
-    <button onclick="reset()" style="background-color: #f44336; margin-left:15px;">🔄 重新演示</button>
+    <div id="commander-box">
+      <div id="commander-title">📢 司令台指令</div>
+      <div id="command-text">開幕站位預備</div>
+      <div id="action-desc">動作說明：五年級在左側，六年級在右側，各班維持一縱列。</div>
+    </div>
+    
+    <div class="btn-group">
+      <button id="prevBtn" onclick="prevStep()">⏮️ 回到上一步</button>
+      <button id="nextBtn" onclick="nextStep()">播放下一步 (1/11)</button>
+      <button id="resetBtn" onclick="reset()">🔄 重置回原點</button>
+    </div>
   </div>
 
   <div id="field">
-    <div id="stage">司 令 台</div>
-    <div id="center-line"></div>
-    <div id="left-half-text">五年級區域</div>
-    <div id="right-half-text">六年級區域<br>(右半場)</div>
     </div>
 
 <script>
   const field = document.getElementById('field');
   let step = 0;
+  const totalSteps = 10;
   
-  // 模擬三個班級的資料 (開幕號碼, 大會舞右側號碼, 顏色)
+  // 模擬班級資料 
   const classes = [
-    { id: '501班', openNum: 37, danceNum: 37, color: '#2b5876' }, 
-    { id: '502班', openNum: 36, danceNum: 35, color: '#4e4376' }, 
-    { id: '503班', openNum: 35, danceNum: 33, color: '#b26a00' }  
+    // 左半場：五年級
+    { id: '501班', grade: 5, openNum: 37, oddNum: 37, evenNum: 36, color: '#0984e3' },
+    { id: '502班', grade: 5, openNum: 36, oddNum: 35, evenNum: 34, color: '#6c5ce7' },
+    { id: '503班', grade: 5, openNum: 35, oddNum: 33, evenNum: 32, color: '#00b894' },
+    // 右半場：六年級
+    { id: '601班', grade: 6, openNum: 38, oddNum: 38, evenNum: 39, color: '#e1b12c' },
+    { id: '602班', grade: 6, openNum: 39, oddNum: 40, evenNum: 41, color: '#e84118' },
+    { id: '603班', grade: 6, openNum: 40, oddNum: 42, evenNum: 43, color: '#8c7ae6' }
   ];
   
   let studentsData = [];
 
+  // 精細化口令劇本 (11個階段)
+  const script = [
+    { cmd: "開幕站位預備", desc: "動作說明：五年級在左側，六年級在右側，各班維持一縱列。" }, // 0
+    { cmd: "「五六年級全體同學聽口令，立正！」", desc: "動作說明：全體準備待命變換隊形。" }, // 1
+    { cmd: "「請五六年級班牌手同學，向左向右轉！」", desc: "動作說明：五年級班牌手向左轉，六年級向右轉。" }, // 2
+    { cmd: "「就大會舞位置，起步走！」", desc: "動作說明：班牌手率先脫隊，平移走到指定的奇數號碼線上。" }, // 3
+    { cmd: "「五六年級全體同學，向左向右轉！」", desc: "動作說明：全體同學轉向外側，準備跟隨班牌手。" }, // 4
+    { cmd: "「就班牌手位置，跑步走！」", desc: "動作說明：學生跑步跟上，維持一縱列站在班牌手後方。（⚠️ 備註提醒：到定位先保持小碎步）" }, // 5
+    { cmd: "「五六年級全體同學，立正！」", desc: "動作說明：學生停止小碎步並齊喊『1！ 2！』。" }, // 6
+    { cmd: "「就大會舞位置，散開！」(喊：1 !)", desc: "動作說明：全體喊 1！偶數號同學往外側踏出第一步。" }, // 7
+    { cmd: "「就大會舞位置，散開！」(喊：2 !)", desc: "動作說明：全體喊 2！偶數號同學往外側踏第二步，對齊雙數號碼牌。" }, // 8
+    { cmd: "「就大會舞位置，散開！」(喊：3 !)", desc: "動作說明：全體喊 3！偶數號同學往前踏出第一步。" }, // 9
+    { cmd: "「就大會舞位置，散開！」(喊：4 !)", desc: "動作說明：全體喊 4！偶數號同學往前踏第二步，完美對齊單數排同學！" } // 10
+  ];
+
   function init() {
-    // 保留固定背景元素，清空其他動態元素
     const staticHTML = `
       <div id="stage">司 令 台</div>
       <div id="center-line"></div>
-      <div id="left-half-text">五年級區域</div>
-      <div id="right-half-text">六年級區域<br>(右半場)</div>
+      <div id="left-text" class="area-text">五年級區域</div>
+      <div id="right-text" class="area-text">六年級區域</div>
     `;
     field.innerHTML = staticHTML;
     studentsData = [];
     
-    // 畫地上標號 (從 32 到 37 號)
-    // 中線在 400px，我們把 37 號放在中線左側 360px，依序往左遞減
+    // 間距：中線在 600px。
+    // 五年級標線 (32~37)，37號在 520px，間距 80px
     for(let i = 32; i <= 37; i++) {
-      let xPos = 360 - (37 - i) * 60; 
-      field.innerHTML += `<div class="line" style="left: ${xPos}px;"></div>`;
-      field.innerHTML += `<div class="number" style="left: ${xPos}px;">${i}</div>`;
+      let x = 520 - (37 - i) * 80;
+      field.innerHTML += `<div class="line" style="left: ${x}px;"></div><div class="number" style="left: ${x}px;">${i}</div>`;
+    }
+    // 六年級標線 (38~43)，38號在 680px，間距 80px
+    for(let i = 38; i <= 43; i++) {
+      let x = 680 + (i - 38) * 80;
+      field.innerHTML += `<div class="line" style="left: ${x}px;"></div><div class="number" style="left: ${x}px;">${i}</div>`;
     }
 
-    // 產生學生節點 (1位班牌手 + 6位同學)
+    // 產生學生節點
     classes.forEach(cls => {
       for(let i = 0; i <= 6; i++) { 
         let isLeader = (i === 0);
         let el = document.createElement('div');
-        
+        let shoutEl = document.createElement('div'); 
+        shoutEl.className = 'shout';
+        el.appendChild(shoutEl);
+
         if (isLeader) {
           el.className = 'student leader';
           el.style.backgroundColor = cls.color;
-          el.innerText = cls.id; // 顯示 "501班"
+          el.innerHTML += cls.id; 
         } else {
           el.className = 'student normal';
           el.style.backgroundColor = cls.color;
-          el.innerText = i;  // 顯示座號 1, 2, 3, 4, 5, 6
+          el.innerHTML += i; 
         }
         
         field.appendChild(el);
         
         studentsData.push({
           element: el,
+          shoutBox: el.querySelector('.shout'),
           classData: cls,
-          index: i,  // i=0是班牌手, i=1是1號, i=2是2號
+          index: i,
           isLeader: isLeader,
-          isEven: (i % 2 === 0 && i !== 0), // 2, 4, 6 號是偶數
-          isOdd: (i % 2 !== 0) // 1, 3, 5 號是奇數
+          isEven: (i % 2 === 0 && i !== 0),
+          isOdd: (i % 2 !== 0)
         });
       }
     });
     
-    renderStep0();
+    renderStep(0);
   }
 
-  // 計算 X 座標 (37號在 360px，每減1號向左移 60px)
-  function getX(num) { return 360 - (37 - num) * 60; }
+  // 取得 X 座標
+  function getX(grade, num) {
+    if(grade === 5) return 520 - (37 - num) * 80;
+    if(grade === 6) return 680 + (num - 38) * 80;
+  }
   
-  // 計算 Y 座標 (開幕與初始間距，每人距離 45px)
-  // 班牌手在最前面 Y=140
-  function getY_open(index) { return 140 + index * 45; }
+  // 取得 Y 座標 
+  function getY_open(index) { return 180 + index * 80; }
 
-  // 步驟 0: 開幕一縱列
-  function renderStep0() {
+  function renderStep(targetStep) {
+    // 更新 UI 文字
+    document.getElementById('command-text').innerText = script[targetStep].cmd;
+    document.getElementById('action-desc').innerText = script[targetStep].desc;
+    
+    let prevBtn = document.getElementById('prevBtn');
+    let nextBtn = document.getElementById('nextBtn');
+    
+    // 判斷「上一步」按鈕狀態
+    if (targetStep > 0) {
+      prevBtn.disabled = false;
+    } else {
+      prevBtn.disabled = true;
+    }
+
+    // 判斷「下一步」按鈕狀態
+    if (targetStep < totalSteps) {
+      nextBtn.innerText = `播放下一步 (${targetStep + 1}/${totalSteps + 1})`;
+      nextBtn.disabled = false;
+    } else {
+      nextBtn.innerText = "✅ 演示完畢";
+      nextBtn.disabled = true;
+    }
+
+    // 執行對應動作
     studentsData.forEach(s => {
-      s.element.style.left = getX(s.classData.openNum) + 'px';
-      s.element.style.top = getY_open(s.index) + 'px';
+      s.shoutBox.style.display = 'none'; // 先隱藏所有氣泡
+      
+      let currentX = getX(s.classData.grade, s.classData.openNum);
+      let currentY = getY_open(s.index);
+
+      // 步驟 3: 班牌手平移
+      if (targetStep >= 3) {
+        if (s.isLeader) currentX = getX(s.classData.grade, s.classData.oddNum);
+      }
+      // 步驟 5: 所有人跟上班牌手平移
+      if (targetStep >= 5) {
+        currentX = getX(s.classData.grade, s.classData.oddNum);
+      }
+      
+      // 步驟 6: 立正喊聲
+      if (targetStep === 6 && !s.isLeader) {
+        s.shoutBox.innerText = '1! 2!';
+        s.shoutBox.style.display = 'block';
+      }
+
+      // 步驟 7~10: 散開的四個分解動作
+      if (targetStep >= 7 && !s.isLeader) {
+        let startX = getX(s.classData.grade, s.classData.oddNum);
+        let targetX = getX(s.classData.grade, s.classData.evenNum);
+        let startY = getY_open(s.index);
+        let targetY = getY_open(s.index - 1); // 往前遞補的位置
+
+        if (targetStep === 7) {
+          s.shoutBox.innerText = '1!';
+          s.shoutBox.style.display = 'block';
+          if (s.isEven) { currentX = (startX + targetX) / 2; } // X 踏一半
+        }
+        if (targetStep === 8) {
+          s.shoutBox.innerText = '2!';
+          s.shoutBox.style.display = 'block';
+          if (s.isEven) { currentX = targetX; } // X 就定位
+        }
+        if (targetStep === 9) {
+          s.shoutBox.innerText = '3!';
+          s.shoutBox.style.display = 'block';
+          if (s.isEven) { currentX = targetX; currentY = (startY + targetY) / 2; } // Y 踏一半
+        }
+        if (targetStep === 10) {
+          s.shoutBox.innerText = '4!';
+          s.shoutBox.style.display = 'block';
+          if (s.isEven) { currentX = targetX; currentY = targetY; } // Y 完美對齊
+        }
+      }
+
+      // 套用座標
+      s.element.style.left = currentX + 'px';
+      s.element.style.top = currentY + 'px';
     });
   }
 
-  // 點擊下一步的邏輯
   function nextStep() {
-    step++;
-    const statusEl = document.getElementById('status');
-    const btn = document.getElementById('nextBtn');
-    
-    if(step === 1) {
-      statusEl.innerText = "第二階段：班牌手先行 (移動到該班大會舞右側號碼)";
-      btn.innerText = "下一步：全班跟上";
-      studentsData.forEach(s => {
-        if(s.isLeader) {
-          s.element.style.left = getX(s.classData.danceNum) + 'px';
-        }
-      });
-    } 
-    else if(step === 2) {
-      statusEl.innerText = "第三階段：全班跟進 (維持一直排，站在班牌手正後方)";
-      btn.innerText = "下一步：雙數號向左前踏步";
-      studentsData.forEach(s => {
-        if(!s.isLeader) {
-          s.element.style.left = getX(s.classData.danceNum) + 'px';
-        }
-      });
+    if (step < totalSteps) {
+      step++;
+      renderStep(step);
     }
-    else if(step === 3) {
-      statusEl.innerText = "第四階段：雙數號左前踏步，與單數號平齊 (班牌手獨立站立！)";
-      btn.innerText = "✅ 演示完畢";
-      btn.disabled = true;
-      studentsData.forEach(s => {
-        if(s.isLeader) {
-          // 班牌手不動，維持在 Y=140
-        } 
-        else if (s.isOdd) {
-          // 單數號 (1, 3, 5) 原地不動！
-          // 已經在第三階段移到正確的 X 軸，Y 軸也維持原本的間距
-        } 
-        else if (s.isEven) {
-          // 雙數號 (2, 4, 6) 往左側號碼踏步 (danceNum - 1)
-          s.element.style.left = getX(s.classData.danceNum - 1) + 'px'; 
-          // 往前一步，對齊前一位單數號的 Y 座標 (例如：2號對齊1號的 Y)
-          s.element.style.top = getY_open(s.index - 1) + 'px'; 
-        }
-      });
+  }
+
+  function prevStep() {
+    if (step > 0) {
+      step--;
+      renderStep(step);
     }
   }
 
   function reset() {
     step = 0;
-    document.getElementById('status').innerText = "第一階段：開幕站位 (五年級在左半場，面朝司令台)";
-    let btn = document.getElementById('nextBtn');
-    btn.innerText = "下一步：班牌手出列 (移至大會舞號碼)";
-    btn.disabled = false;
-    renderStep0();
+    renderStep(0);
   }
 
+  // 自動延遲初始化以確保字體載入
   window.onload = init;
 </script>
 </body>
